@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestra Historia de Amor en fotitos ❤️</title>
+    <!-- Tipografías de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           Configuración General y Reset
+           ========================================================================== */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body, html { 
+            width: 100%; 
+            height: 100%; 
+            overflow-x: hidden; 
+            font-family: 'Montserrat', sans-serif; 
+            /* Fondo con degradado pastel romántico animado */
+            background: linear-gradient(135deg, #ffdde1, #ee9ca7, #f3e5f5, #fff0f5); 
+            background-size: 400% 400%; 
+            animation: gradientBG 15s ease infinite; 
+            color: #4a4a4a;
+            /* Evitar scroll si no es necesario */
+            overflow-y: auto;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ==========================================================================
+           Pantalla de Carga
+           ========================================================================== */
+        #loading-screen {
+            position: fixed; 
+            width: 100%; 
+            height: 100%; 
+            top: 0; 
+            left: 0; 
+            background: #fff0f5;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 9999;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        
+        .loading-heart {
+            font-size: 80px; 
+            color: #ff4d6d; 
+            animation: heartbeat 1.2s infinite;
+        }
+        
+        .loading-text {
+            margin-top: 20px; 
+            font-family: 'Great Vibes', cursive; 
+            font-size: 2.5rem; 
+            color: #ff4d6d;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.3); }
+        }
+
+        /* ==========================================================================
+           Botón para Iniciar (Autoplay bloqueado)
+           ========================================================================== */
+        #start-overlay {
+            position: fixed; 
+            width: 100%; 
+            height: 100%; 
+            top: 0; 
+            left: 0;
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(10px);
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 9998;
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity 0.5s ease;
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, #ff4d6d, #ff758c); 
+            color: white; 
+            border: none;
+            padding: 20px 40px; 
+            font-size: 24px; 
+            border-radius: 50px; 
+            cursor: pointer;
+            font-family: 'Dancing Script', cursive; 
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            max-width: 90%;
+            text-align: center;
+        }
+        
+        .start-btn:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.6); 
+        }
+
+        /* ==========================================================================
+           Contenedor Principal y Mensajes
+           ========================================================================== */
+        #main-content {
+            position: relative; 
+            width: 100%; 
+            min-height: 100%; 
+            z-index: 10;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 60px 20px 100px 20px;
+            opacity: 0; 
+            transition: opacity 1.5s ease;
+        }
+
+        .message-container { 
+            text-align: center; 
+            margin-bottom: 60px; 
+            z-index: 2; 
+        }
+        
+        .title { 
+            font-family: 'Great Vibes', cursive; 
+            font-size: 4rem; 
+            color: #c9184a; 
+            margin-bottom: 15px; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1); 
+        }
+        
+        .subtitle { 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 1.2rem; 
+            color: #590d22; 
+            font-weight: 300; 
+            letter-spacing: 1px; 
+        }
+
+        /* ==========================================================================
+           Configuración de Fotografías (Collage)
+           ========================================================================== */
+        .collage {
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 40px;
+            max-width: 1200px; 
+            width: 100%; 
+            z-index: 2; 
+            perspective: 1000px;
+        }
+        
+        .photo-wrapper {
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(12px);
+            padding: 15px 15px 45px 15px; /* Estilo de fotografía física (tipo polaroid) */
+            border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,0.5);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.6s;
+            position: relative; 
+            cursor: pointer; 
+            /* Movimiento flotante suave */
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Tamaños y rotaciones variadas simulando estar pegadas en una mesa */
+        .photo-wrapper:nth-child(even) { 
+            transform: rotate(4deg); 
+            animation-delay: 1.5s; 
+            margin-top: 30px;
+        }
+        .photo-wrapper:nth-child(odd) { 
+            transform: rotate(-3deg); 
+            animation-delay: 0s; 
+        }
+        .photo-wrapper:nth-child(3n) { 
+            transform: rotate(-6deg); 
+            animation-delay: 3s; 
+        }
+        .photo-wrapper:nth-child(5n) { 
+            transform: rotate(2deg); 
+            margin-top: -15px;
+        }
+        
+        /* Animaciones al pasar el cursor (Hover) */
+        .photo-wrapper:hover {
+            transform: scale(1.15) translateY(-20px) rotate(0deg) !important;
+            box-shadow: 0 30px 60px rgba(201, 24, 74, 0.35); 
+            z-index: 10;
+        }
+        
+        .photo-wrapper img, .photo-wrapper video {
+            width: 100%; 
+            max-width: 300px; 
+            height: auto; 
+            border-radius: 8px; 
+            display: block;
+            object-fit: cover; 
+            aspect-ratio: 3/4;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Destellos alrededor de fotografías */
+        .sparkle {
+            position: absolute; 
+            width: 24px; 
+            height: 24px;
+            background: radial-gradient(circle, rgba(255,255,255,1) 20%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; 
+            opacity: 0; 
+            animation: twinkle 3s infinite;
+        }
+        
+        @keyframes twinkle { 
+            0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); } 
+            50% { opacity: 0.9; transform: scale(1.2) rotate(45deg); } 
+        }
+
+        /* ==========================================================================
+           Letra de la Canción
+           ========================================================================== */
+        .lyrics-container {
+            margin-top: 80px; 
+            background: rgba(255, 255, 255, 0.5); 
+            backdrop-filter: blur(10px);
+            padding: 30px 40px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            text-align: center; 
+            max-width: 700px;
+            width: 90%;
+            font-family: 'Dancing Script', cursive; 
+            font-size: 2.2rem; 
+            color: #800f2f; 
+            min-height: 120px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: opacity 1s ease;
+        }
+
+        /* ==========================================================================
+           Botón Flotante de Música
+           ========================================================================== */
+        .music-btn {
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            width: 65px; 
+            height: 65px;
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(10px);
+            border: 2px solid #ff758c; 
+            border-radius: 50%; 
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(255, 117, 140, 0.5); 
+            font-size: 28px; 
+            color: #ff758c;
+            transition: all 0.3s;
+        }
+        
+        .music-btn:hover { 
+            background: #ff758c; 
+            color: white; 
+            transform: scale(1.1); 
+        }
+        
+        .music-btn.playing { 
+            animation: pulseMusic 2s infinite; 
+        }
+        
+        @keyframes pulseMusic {
+            0% { box-shadow: 0 0 0 0 rgba(255, 117, 140, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 117, 140, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 117, 140, 0); }
+        }
+
+        /* ==========================================================================
+           Efectos de Interacción (Corazones al hacer clic)
+           ========================================================================== */
+        .click-heart {
+            position: fixed; 
+            font-size: 28px; 
+            pointer-events: none; 
+            z-index: 9999;
+            animation: floatUp 1.2s ease-out forwards;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; margin-top: 0; }
+            50% { transform: scale(1.5) rotate(20deg); opacity: 0.9; }
+            100% { transform: scale(2.5) rotate(-20deg); opacity: 0; margin-top: -120px; }
+        }
+
+        /* ==========================================================================
+           Decoraciones Animadas (Flores, corazones, pétalos, mariposas)
+           ========================================================================== */
+        .bg-decor { 
+            position: fixed; 
+            pointer-events: none; 
+            z-index: 1; 
+        }
+        
+        /* Pétalos cayendo lentamente */
+        .falling-petal {
+            width: 18px; 
+            height: 18px; 
+            background: #ffb3c6; 
+            border-radius: 18px 0;
+            animation: fall linear infinite; 
+            opacity: 0.7;
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.5);
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(80px); opacity: 0; }
+        }
+
+        /* Corazones flotando hacia arriba */
+        .floating-heart { 
+            color: rgba(255, 143, 163, 0.5); 
+            font-size: 22px; 
+            animation: rise linear infinite; 
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+        @keyframes rise {
+            0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+            20% { opacity: 0.7; }
+            100% { transform: translateY(-10vh) scale(1.3); opacity: 0; }
+        }
+
+        /* Mariposas moviéndose por la pantalla */
+        .butterfly { 
+            font-size: 24px; 
+            animation: flutter 15s linear infinite; 
+            opacity: 0.6; 
+        }
+        @keyframes flutter {
+            0% { transform: translate(-10vw, 10vh) rotate(15deg); }
+            25% { transform: translate(30vw, 40vh) rotate(-15deg) scale(1.2); }
+            50% { transform: translate(60vw, 20vh) rotate(25deg); }
+            75% { transform: translate(90vw, 50vh) rotate(-20deg) scale(0.9); }
+            100% { transform: translate(110vw, 30vh) rotate(10deg); }
+        }
+
+        /* ==========================================================================
+           Modal de Frase
+           ========================================================================== */
+        #phrase-modal {
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(15px);
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 10000;
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            cursor: pointer;
+        }
+        
+        #phrase-modal.active {
+            opacity: 1; 
+            visibility: visible;
+        }
+        
+        .phrase-content {
+            font-family: 'Great Vibes', cursive; 
+            font-size: 5rem; 
+            color: #c9184a; 
+            text-shadow: 2px 2px 10px rgba(255,255,255,0.9);
+            transform: scale(0.5); 
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center; 
+            padding: 20px;
+            max-width: 90%;
+        }
+        
+        #phrase-modal.active .phrase-content {
+            transform: scale(1) rotate(-2deg);
+        }
+
+        /* ==========================================================================
+           Responsive Design (Teléfonos y Tablets)
+           ========================================================================== */
+        @media (max-width: 900px) {
+            .collage { gap: 30px; }
+            .photo-wrapper { margin-top: 0 !important; }
+        }
+        
+        @media (max-width: 768px) {
+            .title { font-size: 2.8rem; }
+            .subtitle { font-size: 1rem; padding: 0 10px; }
+            
+            .photo-wrapper { 
+                transform: rotate(0deg) scale(1) !important; 
+                animation: none; 
+                margin-top: 10px !important; 
+                width: 100%;
+                max-width: 320px;
+            }
+            
+            .photo-wrapper:hover { 
+                transform: scale(1.05) translateY(-5px) !important; 
+            }
+            
+            .lyrics-container { font-size: 1.6rem; padding: 20px; }
+            .music-btn { width: 55px; height: 55px; bottom: 20px; right: 20px; font-size: 22px; }
+            .phrase-content { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Pantalla de Carga -->
+    <div id="loading-screen">
+        <div class="loading-heart">❤️</div>
+        <p class="loading-text">Cargando nuestros momentos mágicos...</p>
+    </div>
+
+    <!-- 2. Botón de inicio si autoplay es bloqueado por el navegador -->
+    <div id="start-overlay">
+        <button class="start-btn" id="start-btn">❤️ Toca aquí para comenzar nuestra historia ❤️</button>
+    </div>
+
+    <!-- 3. Contenedor Principal -->
+    <div id="main-content">
+        
+        <!-- Mensajes Elegantes -->
+        <div class="message-container">
+            <h1 class="title">Cada recuerdo contigo hace mi mundo más hermoso ❤️</h1>
+            <h2 class="subtitle">Nuestro amor merece un lugar tan bonito como cada momento que vivimos.</h2>
+        </div>
+
+        <!-- Collage de Fotografías y Videos -->
+        <div class="collage">
+            <div class="photo-wrapper"><img src="IMG-20250914-WA0077.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20250914-WA0088.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20250917-WA0084.jpg" alt="Recuerdo"><div class="sparkle" style="top: -15px; left: -15px;"></div></div>
+            <div class="photo-wrapper"><img src="IMG-20251012-WA0086.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20251103-WA0009.jpg" alt="Recuerdo"><div class="sparkle" style="bottom: 30px; right: -15px; animation-delay: 1.5s;"></div></div>
+            <div class="photo-wrapper"><img src="IMG-20251118-WA0072.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><video src="VID-20251209-WA0137.mp4" autoplay loop muted playsinline></video></div>
+            <div class="photo-wrapper"><img src="IMG-20251126-WA0061.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20251126-WA0188.jpg" alt="Recuerdo"><div class="sparkle" style="top: 40%; right: -20px; animation-delay: 0.5s;"></div></div>
+            <div class="photo-wrapper"><img src="IMG-20251209-WA0089.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20251213-WA0113.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><video src="VID-20260126-WA0196.mp4" autoplay loop muted playsinline></video></div>
+            <div class="photo-wrapper"><img src="IMG-20251216-WA0077.jpg" alt="Recuerdo"><div class="sparkle" style="bottom: -15px; left: 20px; animation-delay: 2.2s;"></div></div>
+            <div class="photo-wrapper"><img src="IMG-20260302-WA0149.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><video src="VID-20260208-WA0053.mp4" autoplay loop muted playsinline></video></div>
+            <div class="photo-wrapper"><img src="IMG-20260313-WA0046.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20260317-WA0044.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20260321-WA0078.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20260401-WA0026.jpg" alt="Recuerdo"><div class="sparkle" style="top: -10px; right: -10px; animation-delay: 2s;"></div></div>
+            <div class="photo-wrapper"><img src="IMG-20260401-WA0031.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><video src="VID-20260501-WA0094.mp4" autoplay loop muted playsinline></video></div>
+            <div class="photo-wrapper"><img src="IMG-20260501-WA0091.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><img src="IMG-20260515-WA0105.jpg" alt="Recuerdo"></div>
+            <div class="photo-wrapper"><video src="VID-20260518-WA0304.mp4" autoplay loop muted playsinline></video></div>
+            <div class="photo-wrapper"><video src="VID-20260604-WA0002.mp4" autoplay loop muted playsinline></video></div>
+            <div class="photo-wrapper"><img src="IMG-20260707-WA0006.jpg" alt="Recuerdo"><div class="sparkle" style="bottom: 20px; left: -15px; animation-delay: 1s;"></div></div>
+            <div class="photo-wrapper"><img src="Imagen%20de%20WhatsApp%202025-09-21%20a%20las%2009.50.56_06b9b4af.jpg" alt="Recuerdo"></div>
+        </div>
+
+        <!-- Letra de la canción sincronizada de forma figurativa -->
+        <div class="lyrics-container" id="lyrics">
+            Eres la melodía que no sale de mi cabeza ❤️
+        </div>
+
+    </div>
+
+    <!-- Modal para las frases -->
+    <div id="phrase-modal">
+        <div class="phrase-content" id="phrase-text"></div>
+    </div>
+
+    <!-- Botón flotante de control de música -->
+    <button class="music-btn" id="music-toggle" title="Pausar / Reproducir Música">🎵</button>
+
+    <!-- Audio Element -->
+    <audio id="bg-audio" loop>
+        <source src="ssstik.io_1783655292780.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainContent = document.getElementById('main-content');
+            const startOverlay = document.getElementById('start-overlay');
+            const startBtn = document.getElementById('start-btn');
+            const audio = document.getElementById('bg-audio');
+            const musicToggle = document.getElementById('music-toggle');
+            const lyricsEl = document.getElementById('lyrics');
+
+            // Asegurar que los videos no se queden en un fotograma inicial negro
+            const videos = document.querySelectorAll('video');
+            videos.forEach(vid => {
+                vid.addEventListener('loadeddata', () => {
+                    if(vid.currentTime === 0) {
+                        vid.currentTime = 0.5;
+                    }
+                });
+            });
+
+            /* ==========================================================================
+               Configuración de la Música y Reproducción
+               ========================================================================== */
+            let isPlaying = false;
+
+            const playAudio = async () => {
+                try {
+                    await audio.play();
+                    isPlaying = true;
+                    musicToggle.textContent = '⏸';
+                    musicToggle.classList.add('playing');
+                    startOverlay.style.opacity = '0';
+                    setTimeout(() => startOverlay.style.visibility = 'hidden', 500);
+                } catch (err) {
+                    // Si el navegador requiere interacción previa para reproducir audio
+                    console.log("Autoplay bloqueado por políticas del navegador.");
+                    startOverlay.style.visibility = 'visible';
+                    startOverlay.style.opacity = '1';
+                }
+            };
+
+            const toggleMusic = () => {
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    musicToggle.textContent = '▶️';
+                    musicToggle.classList.remove('playing');
+                } else {
+                    audio.play();
+                    isPlaying = true;
+                    musicToggle.textContent = '⏸';
+                    musicToggle.classList.add('playing');
+                }
+            };
+
+            musicToggle.addEventListener('click', toggleMusic);
+            startBtn.addEventListener('click', playAudio);
+
+            /* ==========================================================================
+               Animación de Carga (Ocultar después de 2.5s)
+               ========================================================================== */
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    mainContent.style.opacity = '1';
+                    playAudio(); // Intenta autoplay al mostrar el contenido
+                }, 1000);
+            }, 2500);
+
+            /* ==========================================================================
+               Mensajes (Letra rotativa y romántica)
+               ========================================================================== */
+            const lyricsArray = [
+                "Quiero caminar de tu mano... ❤️",
+                "Eres mi camino, y siempre serás mi camino ",
+                "Sé que hay mil razones por las cuales no podemos estar juntos",
+                "Pero estoy harto de todas ellas",
+                "Estoy harto de todas esas razones",
+                "Y si empezamos una vez más?...",
+            ];
+            
+            let lyricIndex = 0;
+            
+            setInterval(() => {
+                lyricsEl.style.opacity = '0';
+                setTimeout(() => {
+                    lyricIndex = (lyricIndex + 1) % lyricsArray.length;
+                    lyricsEl.innerHTML = lyricsArray[lyricIndex];
+                    lyricsEl.style.opacity = '1';
+                }, 1000); // Esperar 1 segundo mientras está transparente para cambiar el texto
+            }, 6000); // Cambiar letra cada 6 segundos
+
+            /* ==========================================================================
+               Efectos de Interacción: Corazones al hacer clic o tocar
+               ========================================================================== */
+            const createClickHeart = (e) => {
+                const heart = document.createElement('div');
+                heart.classList.add('click-heart');
+                heart.innerHTML = '❤️';
+                
+                // Variedad de colores pastel y románticos
+                const colors = ['#ff4d6d', '#ff758c', '#ffb3c6', '#ffffff', '#c9184a', '#ff8fa3'];
+                heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Obtener coordenadas considerando ratón y dispositivos táctiles
+                let x = e.clientX;
+                let y = e.clientY;
+                if(e.type === 'touchstart') {
+                    x = e.touches[0].clientX;
+                    y = e.touches[0].clientY;
+                }
+                
+                // Centrar el corazón en el punto exacto
+                heart.style.left = `${x - 14}px`; 
+                heart.style.top = `${y - 14}px`;
+                
+                document.body.appendChild(heart);
+                
+                // Limpiar del DOM luego de la animación
+                setTimeout(() => {
+                    heart.remove();
+                }, 1200);
+            };
+
+            // Usar pointerdown es universal para mouse, touch y pen
+            window.addEventListener('pointerdown', createClickHeart);
+
+            /* ==========================================================================
+               Decoraciones Animadas Continuas (Generador)
+               ========================================================================== */
+            const createDecor = () => {
+                // Tipos de elementos decorativos
+                const decorTypes = ['petal', 'heart', 'butterfly', 'flower'];
+                const type = decorTypes[Math.floor(Math.random() * decorTypes.length)];
+                
+                const el = document.createElement('div');
+                el.classList.add('bg-decor');
+                
+                // Posición inicial aleatoria a lo ancho
+                const startX = Math.random() * window.innerWidth;
+                const duration = Math.random() * 10 + 12; // Duración aleatoria entre 12s y 22s
+                
+                if (type === 'petal') {
+                    el.classList.add('falling-petal');
+                    el.style.left = `${startX}px`;
+                    el.style.animationDuration = `${duration - 5}s`; // Pétalos caen un poco más rápido
+                } else if (type === 'heart') {
+                    el.classList.add('floating-heart');
+                    el.innerHTML = ['💕', '💖', '💗'][Math.floor(Math.random() * 3)];
+                    el.style.left = `${startX}px`;
+                    el.style.animationDuration = `${duration}s`;
+                } else if (type === 'butterfly') {
+                    el.classList.add('butterfly');
+                    el.innerHTML = '🦋';
+                    el.style.top = `${Math.random() * window.innerHeight}px`;
+                    el.style.animationDuration = `${duration + 5}s`;
+                } else if (type === 'flower') {
+                    // Reusar animación de subir
+                    el.classList.add('floating-heart'); 
+                    el.innerHTML = ['🌸', '🌺', '🌷', '🏵️'][Math.floor(Math.random() * 4)];
+                    el.style.left = `${startX}px`;
+                    el.style.fontSize = `${Math.random() * 15 + 15}px`; // Distintos tamaños
+                    el.style.animationDuration = `${duration + 2}s`;
+                }
+
+                document.body.appendChild(el);
+
+                // Remover el elemento del DOM al finalizar la animación
+                setTimeout(() => {
+                    el.remove();
+                }, (duration + 5) * 1000);
+            };
+
+            // Generar decoraciones de forma continua y suave
+            setInterval(createDecor, 1200);
+            
+            // Generar algunas al cargar para no empezar vacío
+            for(let i = 0; i < 15; i++) {
+                setTimeout(createDecor, Math.random() * 3000);
+            }
+
+            /* ==========================================================================
+               Frases al hacer clic en las fotografías y videos
+               ========================================================================== */
+            const lovePhrases = [
+                "Te amo con todo mi corazón ❤️",
+                "Eres la niña de mi vida ❤️",
+                "Princesa de mi Alma ❤️",
+                "Mi lunita preciosa ❤️",
+                "Eres mi mundo ❤️",
+                "Cada sonrisa tuya me da luz ❤️",
+                "Te amo 3 millones ❤️",
+                "Luz de mi vida ❤️",
+                "Brillas más que una estrella ❤️",
+                "Nuestra historia no debe tener fin ❤️",
+                "Eres Mi vida entera ❤️",
+                "Siempre voy a aprender a quererte ❤️",
+                "A dónde Vamos? ❤️",
+                "Eres mi suerte ❤️",
+                "Mi causa perdida ❤️",
+                "Eres mi camino, y siempre serás mi camino ❤️",
+                "Nunca te abandonaré ❤️",
+                "Estrellita de mi corazón ❤️",
+                "Dueña de mis desvelos ❤️",
+                "Dueña de mi corazón ❤️",
+                "Yo ya gasté mi suerte en encontrarte ❤️",
+                "Eres tan bella como las músicas de Kevin Karl ❤️"
+            ];
+
+            const phraseModal = document.getElementById('phrase-modal');
+            const phraseText = document.getElementById('phrase-text');
+            const photoWrappers = document.querySelectorAll('.photo-wrapper');
+
+            photoWrappers.forEach(wrapper => {
+                wrapper.addEventListener('click', (e) => {
+                    const randomPhrase = lovePhrases[Math.floor(Math.random() * lovePhrases.length)];
+                    phraseText.innerHTML = randomPhrase;
+                    phraseModal.classList.add('active');
+                });
+            });
+
+            // Cerrar modal al hacer clic en cualquier parte de la pantalla
+            phraseModal.addEventListener('click', () => {
+                phraseModal.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

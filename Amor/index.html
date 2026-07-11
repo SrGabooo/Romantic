@@ -411,6 +411,46 @@
         }
 
         /* ==========================================================================
+           Modal de Video
+           ========================================================================== */
+        #video-modal {
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(15px);
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 10000;
+            opacity: 0; 
+            visibility: hidden; 
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            cursor: pointer;
+        }
+        
+        #video-modal.active {
+            opacity: 1; 
+            visibility: visible;
+        }
+        
+        #video-modal .photo-wrapper {
+            transform: scale(0.5);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 0;
+            animation: none;
+            cursor: pointer;
+        }
+        
+        #video-modal.active .photo-wrapper {
+            transform: scale(1.5);
+        }
+        
+        #video-modal .photo-wrapper:hover {
+            transform: scale(1.5) translateY(0) !important;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,0.5);
+        }
+
+        /* ==========================================================================
            Responsive Design (Teléfonos y Tablets)
            ========================================================================== */
         @media (max-width: 900px) {
@@ -432,6 +472,14 @@
             
             .photo-wrapper:hover { 
                 transform: scale(1.05) translateY(-5px) !important; 
+            }
+            
+            #video-modal.active .photo-wrapper {
+                transform: scale(1.1);
+            }
+            
+            #video-modal .photo-wrapper:hover {
+                transform: scale(1.1) translateY(0) !important;
             }
             
             .lyrics-container { font-size: 1.6rem; padding: 20px; }
@@ -503,6 +551,13 @@
     <!-- Modal para las frases -->
     <div id="phrase-modal">
         <div class="phrase-content" id="phrase-text"></div>
+    </div>
+
+    <!-- Modal para Videos -->
+    <div id="video-modal">
+        <div class="photo-wrapper">
+            <video id="modal-video-element" loop muted playsinline></video>
+        </div>
     </div>
 
     <!-- Botón flotante de control de música -->
@@ -726,19 +781,41 @@
 
             const phraseModal = document.getElementById('phrase-modal');
             const phraseText = document.getElementById('phrase-text');
+            const videoModal = document.getElementById('video-modal');
+            const modalVideoElement = document.getElementById('modal-video-element');
             const photoWrappers = document.querySelectorAll('.photo-wrapper');
 
             photoWrappers.forEach(wrapper => {
                 wrapper.addEventListener('click', (e) => {
-                    const randomPhrase = lovePhrases[Math.floor(Math.random() * lovePhrases.length)];
-                    phraseText.innerHTML = randomPhrase;
-                    phraseModal.classList.add('active');
+                    const video = wrapper.querySelector('video');
+                    
+                    if (video && !wrapper.closest('#video-modal')) {
+                        // Si es un video, abrimos el modal de video
+                        modalVideoElement.src = video.src;
+                        modalVideoElement.currentTime = video.currentTime; // Sincronizar el tiempo
+                        modalVideoElement.play().catch(err => console.log("Auto-play prevented", err));
+                        videoModal.classList.add('active');
+                    } else if (!wrapper.closest('#video-modal')) {
+                        // Si es una imagen, abrimos el modal de frase
+                        const randomPhrase = lovePhrases[Math.floor(Math.random() * lovePhrases.length)];
+                        phraseText.innerHTML = randomPhrase;
+                        phraseModal.classList.add('active');
+                    }
                 });
             });
 
-            // Cerrar modal al hacer clic en cualquier parte de la pantalla
+            // Cerrar modal de frase al hacer clic en cualquier parte de la pantalla
             phraseModal.addEventListener('click', () => {
                 phraseModal.classList.remove('active');
+            });
+            
+            // Cerrar modal de video
+            videoModal.addEventListener('click', () => {
+                videoModal.classList.remove('active');
+                setTimeout(() => {
+                    modalVideoElement.pause();
+                    modalVideoElement.src = "";
+                }, 500); // Esperar a que termine la transición de opacidad
             });
         });
     </script>

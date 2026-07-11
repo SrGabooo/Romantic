@@ -1,0 +1,200 @@
+:root {
+    --bg-color: #030308;
+    --text-color: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow: hidden; 
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#canvas-container {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+}
+
+/* Interfaz flotante vinculada al planeta 3D */
+#floating-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Evitamos que el contenedor intercepte clics fuera de sus elementos hijos */
+    pointer-events: none; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 100;
+    transition: opacity 0.3s ease;
+    opacity: 1;
+}
+
+#floating-ui.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Contenedor del Disco */
+.vinyl-container {
+    pointer-events: auto; /* Permitir clic si fuera necesario, aunque es decorativo */
+}
+
+.vinyl {
+    width: 70px;
+    height: 70px;
+    background: #111;
+    border-radius: 50%;
+    border: 2px solid #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 
+        inset 0 0 0 3px #1a1a1a,
+        inset 0 0 0 6px #111,
+        inset 0 0 0 9px #1a1a1a,
+        inset 0 0 0 12px #111,
+        inset 0 0 0 15px #1a1a1a,
+        0 4px 10px rgba(0,0,0,0.5);
+}
+
+.vinyl::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--vinyl-color, #ff0055);
+    border-radius: 50%;
+    border: 2px solid #000;
+}
+
+.spinning {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Control de Volumen */
+.volume-container {
+    pointer-events: auto; /* IMPORTANTE: Permitir interactuar con el slider */
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 80px;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    border: none;
+}
+
+/* --- Pantalla de Bienvenida --- */
+#welcome-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #030308;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1.5s ease, visibility 1.5s ease;
+}
+
+#welcome-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.welcome-content {
+    text-align: center;
+    padding: 2rem;
+    max-width: 600px;
+    animation: fadeInWelcome 2s ease forwards;
+}
+
+.welcome-content p {
+    font-size: 2rem;
+    line-height: 1.5;
+    margin-bottom: 2.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px #ff0055;
+    font-style: italic;
+    font-weight: 300;
+}
+
+#enter-btn {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #ff0055;
+    padding: 12px 50px;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#enter-btn:hover {
+    background: #ff0055;
+    box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
+    transform: scale(1.05);
+}
+
+@keyframes fadeInWelcome {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

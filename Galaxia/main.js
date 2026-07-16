@@ -139,10 +139,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- El Sol ---
+    const sunRadius = 60; // Radio interactivo del sol para el clic
+    const sunGeo = new THREE.SphereGeometry(sunRadius, 16, 16);
+    const sunInteractMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+    const sun = new THREE.Mesh(sunGeo, sunInteractMat);
+    sun.userData = { isSun: true }; // Identificador para el clic
+
     const sunTexture = createGlowTexture(0xff8c00);
-    const sunMat = new THREE.SpriteMaterial({ map: sunTexture, color: 0xffffff, blending: THREE.AdditiveBlending });
-    const sun = new THREE.Sprite(sunMat);
-    sun.scale.set(200, 200, 1);
+    const sunMat = new THREE.SpriteMaterial({ map: sunTexture, color: 0xffffff, blending: THREE.AdditiveBlending, transparent: true });
+    const sunSprite = new THREE.Sprite(sunMat);
+    sunSprite.scale.set(200, 200, 1);
+    sun.add(sunSprite);
+    
     scene.add(sun);
 
     // --- Planetas Musicales ---
@@ -234,7 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         
         raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(planets, false);
+        const interactables = [...planets, sun]; // Checar planetas y sol
+        const intersects = raycaster.intersectObjects(interactables, false);
         
         if (intersects.length > 0) {
             document.body.style.cursor = 'pointer';
@@ -249,6 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseDownPos.y = event.clientY;
     });
 
+    let sunMessageTimeout = null;
+
     renderer.domElement.addEventListener('pointerup', (event) => {
         // Ignorar si el usuario soltó sobre la UI de volumen
         if (event.target.closest('#floating-ui')) return;
@@ -262,12 +273,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         raycaster.setFromCamera(mouse, camera);
 
-        // Detectar colisión con las esferas invisibles
-        const intersects = raycaster.intersectObjects(planets, false);
+        // Detectar colisión con las esferas invisibles (planetas y sol)
+        const interactables = [...planets, sun];
+        const intersects = raycaster.intersectObjects(interactables, false);
 
         if (intersects.length > 0) {
-            const clickedPlanet = intersects[0].object;
-            handlePlanetClick(clickedPlanet);
+            const clickedObject = intersects[0].object;
+            
+            if (clickedObject.userData.isSun) {
+                // Mostrar mensaje romántico del sol
+                const sunMsg = document.getElementById('sun-message');
+                sunMsg.classList.remove('hidden');
+                
+                // Limpiar timeout anterior si existe
+                if (sunMessageTimeout) clearTimeout(sunMessageTimeout);
+                
+                // Ocultar después de 4 segundos
+                sunMessageTimeout = setTimeout(() => {
+                    sunMsg.classList.add('hidden');
+                }, 4000);
+            } else {
+                handlePlanetClick(clickedObject);
+            }
         }
     });
 
